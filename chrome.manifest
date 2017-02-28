@@ -1,0 +1,3 @@
+content yomo-42 content/
+overlay	chrome://browser/content/browser.xul chrome://yomo-42/content/overlay.xul
+skin yomo-42 classic/1.0 skin/

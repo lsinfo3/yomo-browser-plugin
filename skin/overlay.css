@@ -1,0 +1,5 @@
+#knights-statusbar-button {
+  list-style-image: url("chrome://yomo-42/skin/yomo_18.png");
+  padding-left: 3px;
+  padding-right: 3px;
+}
