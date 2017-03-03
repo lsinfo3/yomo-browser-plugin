@@ -51,24 +51,26 @@ var yomo_webpage_module = {
     },
 
     startListener: function () {
-        yomo_webpage_module.timerID = setInterval(yomo_webpage_module.collectInfos, 500);
+        yomo_webpage_module.timerID = setInterval(yomo_webpage_module.collectInfos, 1000);
 		setInterval(yomo_webpage_module.getEventInfos, 500);
     },
 
     collectInfos: function () {
         // get data
-        var infos = yomo_webpage_module.getContinuousInfos();
+        var data = yomo_webpage_module.getContinuousInfos();
+		var infos = data[0];
+		var timestamp = data[1];
         //dump(infos);	
 
         // send data to extension
         // only send if new infos
         if (infos != this.last_infos) {
-            yomo_webpage_module.sendInfos(infos, true);
+            yomo_webpage_module.sendInfos(infos, timestamp, true);
         }
         this.last_infos = infos;
     },
 
-	sendInfos: function (infos, continuousEvent) {
+	sendInfos: function (infos, timestamp, continuousEvent) {
         var yomoElement = document.getElementsByTagName("yomo_data_element");
         if (yomoElement.length < 1) {
             yomoElement = new Array();
@@ -79,6 +81,7 @@ var yomo_webpage_module = {
 
 		//continous or event info
         yomoElement[0].setAttribute("infos", infos);
+		yomoElement[0].setAttribute("timestamp", timestamp);
 		if (continuousEvent) {
 			var ev = new Event("yomo_continuousInfos_event", {"bubbles":true, "cancelable":false});
 			yomoElement[0].dispatchEvent(ev);
@@ -101,6 +104,9 @@ var yomo_webpage_module = {
 			currentTime = yomo_webpage_module.player.currentTime;
 			infos += currentTime;
 
+			//get timestamp
+			var timestamp = new Date().getTime();
+
 			// get available playback time
 			var i = yomo_webpage_module.player.buffered.length;
 			availablePlaybackTime = yomo_webpage_module.player.buffered.end(i-1);
@@ -109,11 +115,12 @@ var yomo_webpage_module = {
 				infos += "#" + bufferedTime + "#" + availablePlaybackTime + "\n";
 			}
         }
-        return infos;
+        return [infos, timestamp];
     },
 
 	getEventInfos: function () {
         var infos = "";
+		var currentTime = new Date().getTime();
 
 		// video quality
 		var videoHeight = yomo_webpage_module.player.videoHeight;
@@ -121,7 +128,7 @@ var yomo_webpage_module = {
 			yomo_webpage_module.last_videoHeight = videoHeight;
 			var videoWidth = yomo_webpage_module.player.videoWidth;
 			var infos = "quality:"+ videoHeight + "p" + " (" + videoWidth + "x" + videoHeight + ")\n";
-			yomo_webpage_module.sendInfos(infos, false);
+			yomo_webpage_module.sendInfos(infos, currentTime, false);
 		}
 
 		// volume
@@ -129,7 +136,7 @@ var yomo_webpage_module = {
 		if(yomo_webpage_module.last_volume != volume){
 			yomo_webpage_module.last_volume = volume;
 			var infos = "volume:"+ volume + "\n";
-			yomo_webpage_module.sendInfos(infos, false);
+			yomo_webpage_module.sendInfos(infos, currentTime, false);
 		}
 
 		// duration
@@ -137,7 +144,7 @@ var yomo_webpage_module = {
 		if(yomo_webpage_module.last_duration != duration){
 			yomo_webpage_module.last_duration = duration;
 			var infos = "duration:"+ duration + "\n";
-			yomo_webpage_module.sendInfos(infos, false);
+			yomo_webpage_module.sendInfos(infos, currentTime, false);
 		}
 
 		// youtube id
@@ -145,7 +152,7 @@ var yomo_webpage_module = {
 		if(yomo_webpage_module.last_ytid != ytid){
 			yomo_webpage_module.last_ytid = ytid;
 			var infos = "ytid:"+ ytid + "\n";
-			yomo_webpage_module.sendInfos(infos, false);
+			yomo_webpage_module.sendInfos(infos, currentTime, false);
 		}
 
 		// title
@@ -153,7 +160,7 @@ var yomo_webpage_module = {
 		if(yomo_webpage_module.last_title != title){
 			yomo_webpage_module.last_title = title;
 			var infos = "title:'"+ title + "'\n";
-			yomo_webpage_module.sendInfos(infos, false);
+			yomo_webpage_module.sendInfos(infos, currentTime, false);
 		}        
     },
 
