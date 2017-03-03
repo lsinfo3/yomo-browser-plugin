@@ -183,11 +183,12 @@ var yomo_webpage_connection = {
 
         // get content
         var infos = e.target.getAttribute("infos");
+		var timestamp = e.target.getAttribute("timestamp");
 
         // header
         var header = "##P##";
 
-        yomo_filewriting_webpage_continuous.write(header, infos.trim());
+        yomo_filewriting_webpage_continuous.write(header, [infos.trim(), timestamp]);
         yomo_thread_based_sending.sendData(header + infos.replace(/\n/g, "##")); // thread-based sending
 
 
@@ -424,11 +425,20 @@ yomo_writefile.prototype = {
 
         var currentTime = new Date().getTime();
 
-        if (this._print_header)
-            var data = '[YOMO] ' + currentTime + " | user: " + yomo_settings.userid + " | " + header + " | " + msg.replace(/\n/g, "##") + "\n";
-        else
-            var data = currentTime + "#" + msg + "\n";
-        //yomo_debug.debug("________ data: " + data);
+		if (msg.length == 2){
+			var infos = msg[0];
+			var timestamp = msg[1];
+			if (this._print_header)
+		        var data = '[YOMO] ' + timestamp + " | user: " + yomo_settings.userid + " | " + header + " | " + infos.replace(/\n/g, "##") + "\n";
+		    else
+		        var data = timestamp + "#" + infos + "\n";
+		}else{
+		    if (this._print_header)
+		        var data = '[YOMO] ' + currentTime + " | user: " + yomo_settings.userid + " | " + header + " | " + msg.replace(/\n/g, "##") + "\n";
+		    else
+		        var data = currentTime + "#" + msg + "\n";
+		    //yomo_debug.debug("________ data: " + data);
+		}
 
 		//TODO use corresponding files for each measurement type
 
