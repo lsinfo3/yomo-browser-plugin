@@ -1,6 +1,6 @@
 # yomo-browser-plugin
 Firefox plugin to collect video QoE data while playing YouTube videos
-(http://www.comnet.informatik.uni-wuerzburg.de/forschung/cloud-applications-and-networks/internet-applications/tool-yomoapp/)
+(https://www.informatik.uni-wuerzburg.de/comnet/forschung/tools-and-datasets/tool-yomoapp/)
 
 
 Important: 
